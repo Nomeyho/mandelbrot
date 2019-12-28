@@ -7,7 +7,7 @@ const THRESHOLD = 5;
  * - check if |Z| exceeds a given threshold after N iterations (escape radius)
  * @param {number} x
  * @param {number} y
- * @return a number in range [0, 100] that represent how fast the series diverges.
+ * @return a number in range [0, 1] that represent how fast the series diverges.
  * The higher the return value, the faster it diverges. Returns 0 for convergent series.
  */
 function belongsToMandelbrotSet(x, y) {
@@ -23,7 +23,7 @@ function belongsToMandelbrotSet(x, y) {
     Y = tempY;
 
     if((X * Y) > THRESHOLD) { // not strictly correct, but it speeds up the computation
-      return i / NUMBER_ITERATIONS * 100;
+      return i / NUMBER_ITERATIONS;
     }
   }
 
