@@ -4,32 +4,35 @@
 function draw(ctx, zoom) {
   const width = ctx.canvas.width;
   const height = ctx.canvas.height;
-  const dx = (zoom.xMax - zoom.xMin) / width;
-  const dy = (zoom.yMax - zoom.yMin) / height;
+  const { xMin, xMax, yMin, yMax } = zoom.getExtent();
+  console.log('Rendering fractal:', { xMin, xMax, yMin, yMax });
+  const dx = (xMax - xMin) / width;
+  const dy = (yMax - yMin) / height;
 
   const img = ctx.getImageData(0, 0, width, height);
+  const data = img.data;
   let offset = 0; // sequential acces to image data
 
   for (let j = 0; j < height; j++) {
     for (let i = 0; i < width; i++) {
-      const x = zoom.xMin + i * dx;
-      const y = zoom.yMin + j * dy;
+      const x = xMin + i * dx;
+      const y = yMin + j * dy;
 
       const l = belongsToMandelbrotSet(x, y);
       const rgb = color(l);
 
       if (l == 0) {
         // rgba
-        img.data[offset++] = 0;
-        img.data[offset++] = 0;
-        img.data[offset++] = 0;
-        img.data[offset++] = 255;
+        data[offset++] = 0;
+        data[offset++] = 0;
+        data[offset++] = 0;
+        data[offset++] = 255;
       } else {
         // rgba
-        img.data[offset++] = rgb[0];
-        img.data[offset++] = rgb[1];
-        img.data[offset++] = rgb[2];
-        img.data[offset++] = 255;
+        data[offset++] = rgb[0];
+        data[offset++] = rgb[1];
+        data[offset++] = rgb[2];
+        data[offset++] = 255;
       }
     }
   }
