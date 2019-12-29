@@ -1,11 +1,19 @@
 const NUMBER_ITERATIONS = 100;
 const THRESHOLD = 5;
+let lock = false;
 
 onmessage = function(e) {
+  if(lock) {
+    console.log('[WORKER] Already drawing');
+    return;
+  }
+
+  lock = true;
   console.log('[WORKER] Received', e.data);
   const { width, height, xMin, xMax, yMin, yMax } = e.data;
   const image = draw(width, height, xMin, xMax, yMin, yMax);
   postMessage(image.buffer, [image.buffer]);
+  lock = false;
 };
 
 /**

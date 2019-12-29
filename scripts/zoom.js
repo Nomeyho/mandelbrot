@@ -24,8 +24,8 @@ class Zoom {
 
   _setCenter(x, y) {
     // convert px to units & center
-    const cx = zoom.center[0] + (x * 2 / window.innerWidth) - 1;
-    const cy = zoom.center[1] + (y * 2 / window.innerHeight) - 1;
+    const cx = zoom.center[0] + (x - window.innerWidth / 2) * (2 / (window.innerWidth * this.scale));
+    const cy = zoom.center[1] + (y - window.innerHeight / 2) * (2 / (window.innerHeight * this.scale));
     this.center = [cx, cy];
   }
 
