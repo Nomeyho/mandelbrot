@@ -2,36 +2,35 @@
  * Main file
  */
 const zoom = new Zoom();
-
+const worker = new Worker('scripts/worker.js');
 function main() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  zoom.size(width, height);
-  const d3Zoom = d3.zoom()
-  .scaleExtent([1, 40])
-  .translateExtent([[-100, -100], [width + 90, height + 100]])
-  .on('zoom', () => {
-    console.log('zoomed', d3.event.transform);
-    const { x, y, k } = d3.event.transform;
-    zoom.transform(x, y, k)
-    main();
-  });
+  const width = window.innerWidth * 2; // retina display
+  const height = window.innerHeight * 2;
+  
+  const canvas = document.getElementById('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.width = `${width / 2}px`;
+  canvas.style.height = `${height / 2}px`;
 
-  const canvas = d3.select('#canvas')
-    // make it look pretty on retina display
-    .attr('width', width * 2)
-    .attr('height', height * 2)
-    .style('width', `${width}px`)
-    .style('height', `${height}px`)
-    .call(d3Zoom);
-
-  const ctx = canvas.node().getContext('2d');
+  const ctx = canvas.getContext('2d');
   ctx.scale(2, 2);
 
   console.time('draw');
-  draw(ctx, zoom);
-  console.timeEnd('draw');
+  const { xMin, xMax, yMin, yMax } = zoom.getExtent();
+  worker.postMessage({ width, height, xMin, xMax, yMin, yMax });
+  worker.onmessage = (e) => {
+    const array = new Uint8ClampedArray(e.data);
+    const imageData = new ImageData(array, width, height);
+    ctx.putImageData(imageData, 0, 0);
+    console.timeEnd('draw');
+  }
 }
 
 window.onload = main;
 window.onresize = main;
+document.onwheel = (event) => {
+  event.preventDefault();
+  zoom.onwheel(event);
+  main();
+};
