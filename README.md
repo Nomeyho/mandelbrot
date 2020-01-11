@@ -1,8 +1,11 @@
 # Mandelbrot
 
-## TODO
-* Pan
+Rendering Mandelbrot fractal in the browser.
+
+[https://nomeyho.github.io/mandelbrot/](https://nomeyho.github.io/mandelbrot/)
+
+## Roadmap
+* Better pan & zoom
 * Adaptive number of iterations
-* Web worker, offscreen canvas
-* progressive rendering
-* URL hash to share fractal
+* Progressive rendering
+* Save zoom level in URL (share link)
